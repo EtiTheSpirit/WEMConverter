@@ -1,0 +1,6 @@
+F:\Users\Xan\source\repos\NMSBnkRepacker\WEMCompiler\bin\Release\WEMCompiler.pdb
+F:\Users\Xan\source\repos\NMSBnkRepacker\WEMCompiler\obj\Release\WEMCompiler.csprojAssemblyReference.cache
+F:\Users\Xan\source\repos\NMSBnkRepacker\WEMCompiler\obj\Release\WEMCompiler.csproj.CoreCompileInputs.cache
+F:\Users\Xan\source\repos\NMSBnkRepacker\WEMCompiler\obj\Release\WEMCompiler.pdb
+F:\Users\Xan\source\repos\NMSBnkRepacker\WEMCompiler\bin\Release\WEMCompiler.dll
+F:\Users\Xan\source\repos\NMSBnkRepacker\WEMCompiler\obj\Release\WEMCompiler.dll
