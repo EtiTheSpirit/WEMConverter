@@ -19,11 +19,7 @@ namespace WEMCompiler.WWWem.DataChunks {
 		/// <summary>
 		/// The size of this chunk in bytes.
 		/// </summary>
-		public int Size {
-			get {
-				return 4; // RIFF + the file size value itself don't count towards this, leaving only the 4 bytes from WAVE
-			}
-		}
+		public int Size { get; } = 4;
 
 		/// <summary>
 		/// The total size of this file, minus RIFF and the integer space used to take this value. (File Size - 8 bytes)
@@ -71,14 +67,14 @@ namespace WEMCompiler.WWWem.DataChunks {
 		/// <param name="reader">The <see cref="BinaryReader"/> to take the data from.</param>
 		/// <returns></returns>
 		public static WEMHeader CreateFromStream(BinaryReader reader) {
-			reader.ReadUInt32(); // Skip ... everything really. All of the data is automatically calculated.
 			reader.ReadUInt32();
+			reader.ReadInt32();
 			reader.ReadUInt32();
-			return new WEMHeader(null);
+			return new WEMHeader();
 		}
 
 		public static implicit operator WAVHeader(WEMHeader head) {
-			return new WAVHeader(); // None of the data is actually read by the file.
+			return new WAVHeader();
 		}
 
 	}
@@ -95,11 +91,7 @@ namespace WEMCompiler.WWWem.DataChunks {
 		/// <summary>
 		/// The size of this chunk in bytes.
 		/// </summary>
-		public int Size {
-			get {
-				return 4; // RIFF + the file size value itself don't count towards this, leaving only the 4 bytes from WAVE
-			}
-		}
+		public int Size { get; } = 4;
 
 		/// <summary>
 		/// The total size of this file, minus RIFF and the integer space used to take this value. (File Size - 8 bytes)
@@ -147,14 +139,15 @@ namespace WEMCompiler.WWWem.DataChunks {
 		/// <param name="reader">The <see cref="BinaryReader"/> to take the data from.</param>
 		/// <returns></returns>
 		public static WAVHeader CreateFromStream(BinaryReader reader) {
-			reader.ReadUInt32(); // Skip ... everything really. All of the data is automatically calculated.
 			reader.ReadUInt32();
+			reader.ReadInt32();
 			reader.ReadUInt32();
-			return new WAVHeader(null);
+
+			return new WAVHeader();
 		}
 
 		public static implicit operator WEMHeader(WAVHeader head) {
-			return new WEMHeader(); // None of the data is actually read by the file.
+			return new WEMHeader();
 		}
 	}
 }

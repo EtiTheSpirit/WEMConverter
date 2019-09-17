@@ -20,11 +20,7 @@ namespace WEMCompiler.WWWem.DataChunks {
 		/// <summary>
 		/// The size of this chunk in bytes, used as part of the total value for the <seealso cref="WEMHeader.FileSize"/> property. This value is 16 in WAV files.
 		/// </summary>
-		public int Size {
-			get {
-				return 24;
-			}
-		}
+		public int Size { get; } = 24;
 
 		/// <summary>
 		/// The tag for this format. Unlike WAV files, this is 0xFE 0xFF instead of 0x01 0x00.
@@ -94,16 +90,34 @@ namespace WEMCompiler.WWWem.DataChunks {
 		/// <returns></returns>
 		public static WEMFormatChunk CreateFromStream(BinaryReader reader) {
 			WEMFormatChunk fmtChunk = new WEMFormatChunk();
-			reader.ReadUInt32(); // Skip ID.
-			reader.ReadUInt32(); // Skip size.
-								 //fmtChunk.FormatTag = reader.ReadUInt16();
+
+			// Make sure we're in the right place.
+			char[] id = reader.ReadChars(4);
+			string idAsString = string.Concat(id);
+			Console.WriteLine(idAsString);
+			while (idAsString != ID) {
+				Console.WriteLine("Unexpected ID when trying to create format chunk (got [" + idAsString + "], expecting [" + ID + "] || CURRENT POS: " + reader.BaseStream.Position + ")");
+				int size = reader.ReadInt32();
+				reader.BaseStream.Seek(size, SeekOrigin.Current);
+				id = reader.ReadChars(4);
+				idAsString = string.Concat(id);
+			}
+
+			int objSize = reader.ReadInt32();
+
+			// Now here is where things get important. Size *is* variable, contrary to what I thought. It just has a default value that may be overwritten.
+			long currentPos = reader.BaseStream.Position;
+
 			reader.ReadUInt16(); // Skip format tag. This is so that casting works fine.
 			fmtChunk.Channels = reader.ReadUInt16();
 			fmtChunk.SampleRate = reader.ReadUInt32();
 			reader.ReadUInt32(); // Skip avg bytes / sec
 			reader.ReadUInt16(); // Skip frame size
-			fmtChunk.BitsPerSample = reader.ReadUInt16();
-			reader.Read(new byte[20], 0, 20); // skip junk data
+			reader.ReadUInt16();//fmtChunk.BitsPerSample = reader.ReadUInt16();
+
+			// And skip the necessary amount of bytes
+			reader.BaseStream.Seek(currentPos + objSize, SeekOrigin.Begin);
+
 			return fmtChunk;
 		}
 
@@ -112,7 +126,7 @@ namespace WEMCompiler.WWWem.DataChunks {
 				// Don't mess with the format tag. That needs to stay as its default.
 				Channels = fmt.Channels,
 				SampleRate = fmt.SampleRate,
-				BitsPerSample = fmt.BitsPerSample
+				//BitsPerSample = fmt.BitsPerSample
 			};
 			return chunk;
 		}
@@ -127,11 +141,7 @@ namespace WEMCompiler.WWWem.DataChunks {
 		/// <summary>
 		/// The size of this chunk in bytes, used as part of the total value for the <seealso cref="WEMHeader.FileSize"/> property. This value is 24 in WEM files.
 		/// </summary>
-		public int Size {
-			get {
-				return 16;
-			}
-		}
+		public int Size { get; } = 16;
 
 		/// <summary>
 		/// The tag for this format.
@@ -194,16 +204,33 @@ namespace WEMCompiler.WWWem.DataChunks {
 		/// <returns></returns>
 		public static WAVFormatChunk CreateFromStream(BinaryReader reader) {
 			WAVFormatChunk fmtChunk = new WAVFormatChunk();
-			reader.ReadUInt32(); // Skip ID.
-			reader.ReadInt32(); // Skip size.
-								 //fmtChunk.FormatTag = reader.ReadUInt16();
+
+			// Make sure we're in the right place.
+			char[] id = reader.ReadChars(4);
+			string idAsString = string.Concat(id);
+			while (idAsString != ID) {
+				Console.WriteLine("Unexpected ID when trying to create format chunk (got [" + idAsString + "], expecting [" + ID + "] || CURRENT POS: " + reader.BaseStream.Position + ")");
+				int size = reader.ReadInt32();
+				reader.BaseStream.Seek(size, SeekOrigin.Current);
+				id = reader.ReadChars(4);
+				idAsString = string.Concat(id);
+			}
+
+			int objSize = reader.ReadInt32();
+
+			// Now here is where things get important. Size *is* variable, contrary to what I thought. It just has a default value that may be overwritten.
+			long currentPos = reader.BaseStream.Position;
+
 			reader.ReadUInt16(); // Skip format tag. This is so that casting works fine.
 			fmtChunk.Channels = reader.ReadUInt16();
 			fmtChunk.SampleRate = reader.ReadUInt32();
 			reader.ReadUInt32(); // Skip avg bytes / sec
 			reader.ReadUInt16(); // Skip frame size
-			fmtChunk.BitsPerSample = reader.ReadUInt16();
-			//reader.Read(new byte[20], 0, 20); // skip junk data
+			reader.ReadUInt16();//fmtChunk.BitsPerSample = reader.ReadUInt16();
+
+			// And skip the necessary amount of bytes
+			reader.BaseStream.Seek(currentPos + objSize, SeekOrigin.Begin);
+
 			return fmtChunk;
 		}
 
@@ -212,7 +239,7 @@ namespace WEMCompiler.WWWem.DataChunks {
 				// Don't mess with the format tag. That needs to stay as its default.
 				Channels = fmt.Channels,
 				SampleRate = fmt.SampleRate,
-				BitsPerSample = fmt.BitsPerSample
+				//BitsPerSample = fmt.BitsPerSample
 			};
 			return chunk;
 		}

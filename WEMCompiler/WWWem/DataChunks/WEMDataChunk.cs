@@ -76,7 +76,18 @@ namespace WEMCompiler.WWWem.DataChunks {
 		/// <returns></returns>
 		public static WEMDataChunk CreateFromStream(BinaryReader reader, WEMFormatChunk fmtChunk) {
 			WEMDataChunk data = new WEMDataChunk(fmtChunk);
-			reader.ReadUInt32(); // skip ID
+
+			// Make sure we're in the right place.
+			char[] id = reader.ReadChars(4);
+			string idAsString = string.Concat(id);
+			while (idAsString != ID) {
+				Console.WriteLine("Unexpected ID when trying to create format chunk (got [" + idAsString + "], expecting [" + ID + "] || CURRENT POS: " + reader.BaseStream.Position + ")");
+				int size = reader.ReadInt32();
+				reader.BaseStream.Seek(size, SeekOrigin.Current);
+				id = reader.ReadChars(4);
+				idAsString = string.Concat(id);
+			}
+
 			uint length = reader.ReadUInt32();
 			data.Data = new short[length / 2];
 			byte[] raw = new byte[length];
@@ -164,12 +175,16 @@ namespace WEMCompiler.WWWem.DataChunks {
 		/// <returns></returns>
 		public static WAVDataChunk CreateFromStream(BinaryReader reader, WAVFormatChunk fmtChunk) {
 			WAVDataChunk data = new WAVDataChunk(fmtChunk);
-			string tag = string.Concat(reader.ReadChars(4));
-			// Catch case. ffmpeg outputs a LIST section. It has the length as an int right after.
-			if (tag == "LIST") {
-				int c = (int)reader.ReadUInt32();
-				reader.ReadBytes(c + 4);
-				// Skip those bytes.
+
+			// Make sure we're in the right place.
+			char[] id = reader.ReadChars(4);
+			string idAsString = string.Concat(id);
+			while (idAsString != ID) {
+				Console.WriteLine("Unexpected ID when trying to create format chunk (got [" + idAsString + "], expecting [" + ID + "] || CURRENT POS: " + reader.BaseStream.Position + ")");
+				int size = reader.ReadInt32();
+				reader.BaseStream.Seek(size, SeekOrigin.Current);
+				id = reader.ReadChars(4);
+				idAsString = string.Concat(id);
 			}
 
 			uint length = reader.ReadUInt32();
