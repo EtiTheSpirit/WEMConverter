@@ -20,6 +20,7 @@ namespace WEMCompilerTool {
 
 			FileInfo file = new FileInfo(args[0]);
 			if (file.Extension.ToLower() == ".wem") {
+				Console.WriteLine("WARNING: WEM conversion is a bit busted right now! If your file is broken, sorry! A patch will be out ASAP.");
 				WEMFile wem = new WEMFile(file.FullName);
 				WAVFile wav = wem.ConvertToWAV();
 				wav.SaveToFile(file.FullName + ".wav");
@@ -27,9 +28,8 @@ namespace WEMCompilerTool {
 				file = FFmpegWrapper.ConvertToWaveFile(file.FullName);
 				WAVFile wav = new WAVFile(file.FullName);
 				WEMFile wem = wav.ConvertToWEM();
-				wem.SaveToFile(file.FullName + ".wem");
+				wem.SaveToFile(args[0] + ".wem");
 			}
-
 		}
 	}
 }
