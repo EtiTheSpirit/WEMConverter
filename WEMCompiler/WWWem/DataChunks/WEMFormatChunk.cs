@@ -94,7 +94,7 @@ namespace WEMCompiler.WWWem.DataChunks {
 			// Make sure we're in the right place.
 			char[] id = reader.ReadChars(4);
 			string idAsString = string.Concat(id);
-			Console.WriteLine(idAsString);
+			//Console.WriteLine(idAsString);
 			while (idAsString != ID) {
 				Console.WriteLine("Unexpected ID when trying to create format chunk (got [" + idAsString + "], expecting [" + ID + "] || CURRENT POS: " + reader.BaseStream.Position + ")");
 				int size = reader.ReadInt32();
